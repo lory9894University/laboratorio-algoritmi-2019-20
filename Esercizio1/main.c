@@ -8,9 +8,15 @@ typedef struct{
   char * field1;
 }Record;
 
-Record * csv_reading(char * filename){
+typedef struct {
+  Record * recordArray;
+  size_t size;
+}RecordColletion;
+
+RecordColletion csv_reading(char * filename){
   FILE *fPtr;
   Record * recordArray;
+  RecordColletion records;
   int line=0, size=0;
 
   if((fPtr=fopen(filename,"r"))==NULL){
@@ -29,18 +35,20 @@ Record * csv_reading(char * filename){
   while (fscanf(fPtr,"%d,%s,%d,%f",&recordArray[line].id,recordArray[line].field1,&recordArray[line].field2,&recordArray[line].field3));
   line--;
   recordArray = realloc(recordArray, sizeof(Record)*line);
+  records.recordArray=recordArray;
+  records.size=line;
 
-  return recordArray;
+  return records;
 }
 
 int main(int argv,char ** argc) {
-  Record* recordArray;
+  RecordColletion records;
 
   if (argv != 2){
     printf("insert as the first argument the pathname of the csv file\n");
     exit(1);
   }
-  recordArray = csv_reading(argc[1]);
+  records = csv_reading(argc[1]);
   printf("Hello, World!\n");
   return 0;
 }
