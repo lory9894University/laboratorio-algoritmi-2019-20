@@ -1,17 +1,17 @@
 #include "sorting.h"
 #include <stdio.h>
 
-void swap(void *array,void *b){
-  void *c = b;
-  b=array;
-  array=c;
+void swap(void *a,void *b){
+  void *c = &b;
+  b=&a;
+  a=&c;
 }
 /*quicksort */
-int partition(void ** array, int l,int r){
+int partition(void * array, int l,int r){
   return 0;
 }
 
-void quick_sort_rec(void ** array, int l,int r){
+void quick_sort_rec(void * array, int l,int r){
   int x;
 
   if (r <=l)
@@ -22,7 +22,7 @@ void quick_sort_rec(void ** array, int l,int r){
 
 }
 
-void quick_sort(void ** array, size_t size){
+void quick_sort(void * array, size_t size){
   quick_sort_rec(array,0,size);
 }
 
@@ -36,9 +36,9 @@ void insertion_sort(void ** array,size_t size, int isDecreasing){
   void * temp;
   int j=0;
   for (int i = 0; i <size ; ++i) {
-    temp = array[i];
+    temp = &array[i];
     for (j= i-1 ; j>=0 && array[j]>temp; j--){
-      array[j+1]=array[j];
+      array[j+1]=&array[j];
     }
     array[j+1]=temp;
   }
