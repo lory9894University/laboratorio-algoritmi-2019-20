@@ -93,7 +93,7 @@ int main(int argv, char **argc) {
     printf("%d %s %d %f\n",records.recordArray[i]->id,records.recordArray[i]->field1,records.recordArray[i]->field2,records.recordArray[i]->field3);
   }*/
   printf("\n\n");
-  quick_sort(records.recordArray, records.size, (cmpFunction) int_comparer);
+  quick_sort((void *)records.recordArray, records.size, (cmpFunction) int_comparer);
   for (int i = 0; i < records.size; ++i) {
     fprintf(fptr, "%d %s %d %f\n", records.recordArray[i]->id, records.recordArray[i]->field1,
             records.recordArray[i]->field2, records.recordArray[i]->field3);
