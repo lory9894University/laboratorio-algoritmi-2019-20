@@ -108,16 +108,18 @@ void ordered_array(){
 
 
 void inverted_array(){
-  int ** array;
+  int **array;
+  int numberList[5] = {7, 5, 3, 2, 1};
 
-  array=malloc(sizeof(int *)*5);
-  for (int i = 0; i < 5; ++i){
-    array[i]=malloc(sizeof(int));
-    array[i]=&numberList[i];
+
+  array = malloc(sizeof(int *) * 5);
+  for (int i = 0; i < 5; ++i) {
+    array[i] = malloc(sizeof(int));
+    array[i] = &numberList[i];
   }
-  
-  insertion_sort((void*)array,5,(cmpFunction)int_comparer);
-  TEST_ASSERT_EQUAL(1,*array[0]);
+
+  insertion_sort((void *) array, 5, (cmpFunction) int_comparer);
+  TEST_ASSERT_EQUAL(1, *array[0]);
   TEST_ASSERT_EQUAL(2,*array[1]);
   TEST_ASSERT_EQUAL(3,*array[2]);
   TEST_ASSERT_EQUAL(5,*array[3]);

@@ -34,6 +34,8 @@ void copy_from_line(char *line,Record *record){
   strcpy(record->field1,tempField1);
 }
 
+/**reads from the file having path "filname" according to the csv format
+ * saves the data in a RecordCollection struct (struct containig an array of records and its size)**/
 RecordColletion csv_reading(char * filename){
   FILE *fPtr;
   RecordLink *recordArray;
@@ -59,6 +61,7 @@ RecordColletion csv_reading(char * filename){
   recordArray = realloc(recordArray, sizeof(RecordLink) * line);
   records.recordArray = recordArray;
   records.size = line;
+  fclose(fPtr);
 
   return records;
 }
@@ -82,21 +85,49 @@ static int string_comparer(Record *record1, Record *record2) {
 
 int main(int argv, char **argc) {
   RecordColletion records;
-  FILE *fptr = fopen("out.csv", "w");
+  FILE *fptr;
+  char choice = ' ';
 
   if (argv != 2) {
     printf("insert as the first argument the pathname of the csv file\n");
     exit(1);
   }
   records = csv_reading(argc[1]);
-  /*for (int i = 0; i <records.size ; ++i) {
-    printf("%d %s %d %f\n",records.recordArray[i]->id,records.recordArray[i]->field1,records.recordArray[i]->field2,records.recordArray[i]->field3);
-  }*/
-  printf("\n\n");
-  quick_sort((void *)records.recordArray, records.size, (cmpFunction) int_comparer);
+  while (choice != 'Q' && choice != 'I') {
+    printf("do you want to use quick sort or insertion sort?[Q/I]\n");
+    scanf("%c", &choice);
+  }
+
+  fptr = fopen("field1_out.csv", "w");
+  if (choice == 'Q')
+    quick_sort((void *) records.recordArray, records.size, (cmpFunction) string_comparer);
+  else
+    insertion_sort((void *) records.recordArray, records.size, (cmpFunction) string_comparer);
   for (int i = 0; i < records.size; ++i) {
     fprintf(fptr, "%d %s %d %f\n", records.recordArray[i]->id, records.recordArray[i]->field1,
             records.recordArray[i]->field2, records.recordArray[i]->field3);
   }
+  fclose(fptr);
+  fptr = fopen("field2_out.csv", "w");
+  if (choice == 'Q')
+    quick_sort((void *) records.recordArray, records.size, (cmpFunction) int_comparer);
+  else
+    insertion_sort((void *) records.recordArray, records.size, (cmpFunction) int_comparer);
+  for (int i = 0; i < records.size; ++i) {
+    fprintf(fptr, "%d %s %d %f\n", records.recordArray[i]->id, records.recordArray[i]->field1,
+            records.recordArray[i]->field2, records.recordArray[i]->field3);
+  }
+  fclose(fptr);
+  fptr = fopen("field3_out.csv", "w");
+  if (choice == 'Q')
+    quick_sort((void *) records.recordArray, records.size, (cmpFunction) float_comparer);
+  else
+    insertion_sort((void *) records.recordArray, records.size, (cmpFunction) float_comparer);
+  for (int i = 0; i < records.size; ++i) {
+    fprintf(fptr, "%d %s %d %f\n", records.recordArray[i]->id, records.recordArray[i]->field1,
+            records.recordArray[i]->field2, records.recordArray[i]->field3);
+  }
+  fclose(fptr);
+
   return 0;
 }
