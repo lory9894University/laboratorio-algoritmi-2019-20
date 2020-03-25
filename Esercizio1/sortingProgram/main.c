@@ -86,7 +86,7 @@ static int string_comparer(Record *record1, Record *record2) {
 int main(int argv, char **argc) {
   RecordColletion records;
   FILE *fptr;
-  char choice = 'Q';
+  char choice = ' ';
 
   if (argv != 2) {
     printf("insert as the first argument the pathname of the csv file\n");
