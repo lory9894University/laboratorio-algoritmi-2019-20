@@ -7,11 +7,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static java.util.stream.Collectors.toList;
 
 public class ExampleApp {
   ArrayList<String> toCorrect = null;
@@ -36,7 +33,7 @@ public class ExampleApp {
   }
 
   public static void main(String[] args) {
-    ExampleApp autocorrect = new ExampleApp("documents/correctme.txt", "documents/smaller.txt");
+    ExampleApp autocorrect = new ExampleApp("documents/correctme.txt", "documents/dictionary.txt");
     autocorrect.getCorrection().entrySet().stream().filter(entry -> entry.getValue().get(0).compareTo(entry.getKey()) != 0).forEach(System.out::println);
   }
 
@@ -46,7 +43,7 @@ public class ExampleApp {
     int localEditDistance = 0;
 
     for (String correctWord : dictionary) {
-      localEditDistance = EditDistance.editDistanceRecursive(word, correctWord); //TODO: questo è la versione ricorsiva
+      localEditDistance = EditDistance.editDistanceDyn(word, correctWord);
       if (localEditDistance < minEditDistance) {
         alternatives.clear();
         minEditDistance = localEditDistance;

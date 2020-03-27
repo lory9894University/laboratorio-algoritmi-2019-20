@@ -1,8 +1,17 @@
 package editdistance;
 
+import java.util.Arrays;
 import java.util.stream.IntStream;
 
 public class EditDistance {
+  /**
+   * calculate the necessary number of insertion/deletion of characters to
+   * transform s1 in s2, in a recursive manner
+   *
+   * @param s1 source string
+   * @param s2 objective string
+   * @return the edit distance between s1 and s2
+   **/
   public static int editDistanceRecursive(String s1, String s2) {
     int dNop, dIns, dCanc;
     dNop = dIns = dCanc = 0;
@@ -17,5 +26,35 @@ public class EditDistance {
     dCanc = 1 + editDistanceRecursive(s1, s2.substring(1));
     dIns = 1 + editDistanceRecursive(s1.substring(1), s2);
     return IntStream.of(dNop, dIns, dCanc).min().getAsInt();
+  }
+
+  /**
+   * calculate the necessary number of insertion/deletion of characters to
+   * transform s1 in s2, using dynamic programming paradigm
+   *
+   * @param s1 source string
+   * @param s2 objective string
+   * @return the edit distance between s1 and s2
+   **/
+  public static int editDistanceDyn(String s1, String s2) {
+    int x = s1.length();
+    int y = s2.length();
+    int[][] matrix = new int[x][y];
+
+    for (int[] arr : matrix) {
+      Arrays.fill(arr, -1);
+    }
+    return calculateDistance(s1, s2, matrix, x - 1, y - 1);
+  }
+
+  /**
+   * populate the matrix of edit distance of s1 and s2
+   *
+   * @param s1 source string
+   * @param s2 objective string
+   * @return the edit distance between s1 and s2
+   **/
+  private static int calculateDistance(String s1, String s2, int[][] matrix, int i, int j) {
+    return 0;
   }
 }
