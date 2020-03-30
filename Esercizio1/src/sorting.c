@@ -6,21 +6,28 @@
 /** partition function takes the element on the right and uses it as a pivot
  * then places the element lower then the pivot on its left and the greather on the right**/
 int partition(void **array, int l, int r, cmpFunction comparer) {
-  void *pivot = array[r];
-  void *tmp;
+  void *pivot = array[l];
+  void *temp;
+  int j=r;
+  int i=l+1;
 
-  for (int i = l; i < r; i++) {
-    if (comparer(array[i], pivot) <= 0) {
-      tmp = array[l];
-      array[l] = array[i];
-      array[i] = tmp;
-      l++;
+   while(i<=j){
+    if (comparer(array[i],pivot) <= 0)
+      i++;
+    else if (array[j],pivot > 0)
+      j--;
+    else{
+      temp=array[i];
+      array[i]=array[j];
+      array[j]=temp;
+      i++;
+      j--;
     }
   }
-  tmp = array[l];
-  array[l] = array[r];
-  array[r] = tmp;
-  return l;
+  temp=array[l];
+  array[l]=array[j];
+  array[j]=temp;
+  return j;
 }
 
 /**recursive part of the quick sort algorithm.
