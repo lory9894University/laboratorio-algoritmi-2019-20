@@ -55,6 +55,20 @@ public class EditDistance {
    * @return the edit distance between s1 and s2
    **/
   private static int calculateDistance(String s1, String s2, int[][] matrix, int i, int j) {
-    return 0;
+    if (i<0)
+      return j + 1;
+    if (j<0)
+      return i + 1;
+
+    if (matrix[i][j]!=-1)
+      return matrix[i][j];
+
+    if (s1.charAt(i) == s2.charAt(j))
+      matrix[i][j] = calculateDistance(s1, s2, matrix, i - 1, j - 1);
+    else {
+      matrix[i][j] = 1 + Math.min(calculateDistance(s1, s2, matrix, i, j - 1), calculateDistance(s1, s2, matrix, i - 1, j));
+    }
+
+    return matrix[i][j];
   }
 }
