@@ -25,7 +25,7 @@ int hashFunction(int key,Hashmap map){
   return hash;
  }
 
-Hashmap * newMap(int size){
+Hashmap * new_map(int size){
   Hashmap *map = malloc(sizeof(Hashmap));
 
   map->entryNum=0;
@@ -33,7 +33,7 @@ Hashmap * newMap(int size){
   return map;
 }
 
-void cancelMap(Hashmap * map){
+void cancel_map(Hashmap * map){
   Link p;
   //TODO: devo deallocare i puntatori a void delle entry?
   for (int i = 0; i <map->size ; ++i) {
@@ -49,21 +49,21 @@ void cancelMap(Hashmap * map){
   map->entryNum=0;
 }
 
-void freeMap(Hashmap * map){
-  cancelMap(map);
+void free_map(Hashmap * map){
+  cancel_map(map);
   free(map->map);
   free(map);
 }
 
-int isEmptyMap(Hashmap * map){
+int is_empty_map(Hashmap * map){
   return map->entryNum==0;
 }
 
-int countEntry(Hashmap * map){
+int count_entry(Hashmap * map){
   return map->entryNum;
 }
 
-void ** getKeys(HashmapPtr map){
+void ** get_keys(HashmapPtr map){
   void **keys;
   int c=0;
   Link p;

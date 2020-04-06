@@ -4,13 +4,13 @@
 
 typedef struct _hashmap * HashmapPtr;
 
-HashmapPtr newMap(int size);
-void freeMap(HashmapPtr  map);
-int isEmptyMap(HashmapPtr map);
-void cancelMap(HashmapPtr map);
-int countEntry(HashmapPtr map);
-void insertEntry(HashmapPtr map,void* key, void* value);
-void getValue(HashmapPtr map, void* key);
-void deleteValue(HashmapPtr map, void* key);
-void ** getKeys(HashmapPtr map);
+HashmapPtr new_map(int size);
+void free_map(HashmapPtr  map);
+int is_empty_map(HashmapPtr map);
+void cancel_map(HashmapPtr map);
+int count_entry(HashmapPtr map);
+void insert_entry(HashmapPtr map,void* key, void* value);
+void get_value(HashmapPtr map, void* key);
+void delete_value(HashmapPtr map, void* key);
+void ** get_keys(HashmapPtr map);
 #endif //ESERCIZIO3_HASHMAP_H

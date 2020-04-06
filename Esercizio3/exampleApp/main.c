@@ -11,7 +11,8 @@ typedef struct _pair{
 
 /**reads from the file having path "filname" according to the csv format
  * saves the data in a RecordCollection struct (struct containig an array of records and its size)**/
-Pair * csvReadingToArray(char * filename){
+Pair * csv_reading_to_array
+(char * filename){
   FILE *fPtr;
   Pair *recordArray;
   char textLine[1024];
@@ -35,7 +36,7 @@ Pair * csvReadingToArray(char * filename){
   return recordArray;
 }
 
-void mineCountingSort(Pair arr[], int range){
+void mine_counting_sort(Pair arr[], int range){
   Pair hostArray[6321078];
   int i;
   Pair count[range + 1];
