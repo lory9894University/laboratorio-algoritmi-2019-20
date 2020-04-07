@@ -12,25 +12,39 @@ typedef struct _entry{
 typedef struct _hashmap{
   Entry * map;
   int entryNum,size;
+  keyToHash integerCalculator;
 
 } Hashmap;
 
 /**
  * function gets a key and hashes that value to get the position in the vetor**/
-int hashFunction(int key,Hashmap map){
+int hashFunction(void* key,Hashmap map){
    int hash=0;
 
-   hash= hash%map.size;
+   hash= map.integerCalculator(key)%map.size;
 
   return hash;
  }
 
-Hashmap * new_map(int size){
+Hashmap * new_map(int size,keyToHash intCalculator){
   Hashmap *map = malloc(sizeof(Hashmap));
 
   map->entryNum=0;
   map->size = size;
+  map->map=(Link)malloc(sizeof(Entry)*size*2);
+  map->integerCalculator=intCalculator;
+
   return map;
+}
+
+void free_map(Hashmap * map){
+  cancel_map(map);
+  free(map->map);
+  free(map);
+}
+
+int is_empty_map(Hashmap * map){
+  return map->entryNum==0;
 }
 
 void cancel_map(Hashmap * map){
@@ -49,18 +63,19 @@ void cancel_map(Hashmap * map){
   map->entryNum=0;
 }
 
-void free_map(Hashmap * map){
-  cancel_map(map);
-  free(map->map);
-  free(map);
-}
-
-int is_empty_map(Hashmap * map){
-  return map->entryNum==0;
-}
-
 int count_entry(Hashmap * map){
   return map->entryNum;
+}
+
+void insert_entry(HashmapPtr map,void* key, void* value,cmpFunction compare){
+
+}
+
+void get_value(HashmapPtr map, void* key,cmpFunction compare){
+
+}
+void delete_value(HashmapPtr map, void* key,cmpFunction compare){
+
 }
 
 void ** get_keys(HashmapPtr map){
