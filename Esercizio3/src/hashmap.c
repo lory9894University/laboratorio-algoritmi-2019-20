@@ -32,7 +32,7 @@ Hashmap *new_map(int size, keyToHash intCalculator, cmpFunction comparer) {
 
   map->entryNum = 0;
   map->size = size;
-  map->map = (Link) malloc(sizeof(Entry) * size * 2);
+  map->map = (Link) malloc(sizeof(Entry) * size);
   map->integerCalculator = intCalculator;
   map->comparer = comparer;
 
@@ -53,14 +53,15 @@ void cancel_map(Hashmap * map){
   Link p;
   //TODO: devo deallocare i puntatori a void delle entry?
   for (int i = 0; i <map->size ; ++i) {
-    p=&map->map[i];
-    while(p->next!=NULL)
-      p=p->next;
-    while (p->previous!=NULL){
-      p=p->previous;
+    p = &map->map[i];
+    while (p->next != NULL)
+      p = p->next;
+    while (p->previous != NULL) {
+      p = p->previous;
       free(p->next);
     }
-    free(p);
+    p->value = NULL;
+    p->key = NULL;
   }
   map->entryNum=0;
 }
@@ -76,6 +77,7 @@ void insert_entry(HashmapPtr map, void *key, void *value) {
   if (map->map[index].key == NULL) {
     map->map[index].key = key;
     map->map[index].value = value;
+    map->entryNum++;
   } else {
     p = &map->map[index];
     while (p->next != NULL) {
@@ -118,7 +120,7 @@ void *get_value(HashmapPtr map, void *key) {
 
 }
 
-void delete_value(HashmapPtr map, void *key) {
+int delete_entry(HashmapPtr map, void *key) {
   int index = hashFunction(key, *map);
   Link p, head;
 
@@ -131,17 +133,21 @@ void delete_value(HashmapPtr map, void *key) {
   }
   if (map->comparer(p->key, key) != 0) {
     printf("element not found\n");
-    return;
+    return 0;
   }
-  //that's a bodge. fix it if you find a better way
-  if (p == head && p->next != NULL)
+  map->entryNum--; //element found, decrese entry number even if it's not yet deleted
+  //TODO: that's a bodge. fix it if you find a better way
+  if (p == head && p->next != NULL) {
     map->map[index] = *p->next;
-  else if (p == head) {
+    map->map[index].previous = NULL;
+  } else if (p == head) {
     p->key = NULL;
     p->value = NULL;
-  } else
+  } else {
     p->previous->next = p->next;
+  }
   free(p);
+  return 1;
 }
 
 void ** get_keys(HashmapPtr map){
