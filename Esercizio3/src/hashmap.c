@@ -17,8 +17,7 @@ typedef struct _hashmap{
 
 } Hashmap;
 
-/**
- * function gets a key and hashes that value to get the position in the vetor**/
+/**function gets a key and hashes that value to get the position in the vetor**/
 int hashFunction(void* key,Hashmap map){
    int hash=0;
 
@@ -63,10 +62,24 @@ void cancel_map(Hashmap * map){
     p->value = NULL;
     p->key = NULL;
   }
-  map->entryNum=0;
+  map->entryNum = 0;
 }
 
-int count_entry(Hashmap * map){
+int verify_key(HashmapPtr map, void *key) {
+  int index = hashFunction(key, *map);
+  Link p;
+
+  p = &map->map[index];
+  while (p->next != NULL) {
+    if (map->comparer(p->key, key) == 0) {
+      return 1;
+    }
+    p = p->next;
+  }
+  return 0;
+}
+
+int count_entry(Hashmap *map) {
   return map->entryNum;
 }
 

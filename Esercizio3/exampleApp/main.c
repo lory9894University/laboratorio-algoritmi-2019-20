@@ -9,7 +9,7 @@ typedef struct _pair{
   int occupied;
 }Pair;
 
-/**reads from the file having path "filname" according to the csv format
+/**reads from the file having path "filename" according to the csv format
  * saves the data in a RecordCollection struct (struct containig an array of records and its size)**/
 Pair *csv_reading_to_array(char *filename) {
   FILE *fPtr;
