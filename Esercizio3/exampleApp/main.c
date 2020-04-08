@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include "hashmap.h"
 
 typedef struct _pair{
@@ -179,8 +180,14 @@ int main(int argc, char **argv) {
   recordArray = csv_reading_to_array(argv[1], &range);
   mine_counting_sort(recordArray, range);
   keys = random_picker();
+  clock_t begin = clock();
   printf("keys found from hashmap: %d\n", hash_get(map, keys, 10000000));
-  printf("time passed: \n");
+  clock_t end = clock();
+  double time_spent = (double) (end - begin) / CLOCKS_PER_SEC;
+  printf("time passed: %f\n", time_spent);
+  begin = clock();
   printf("keys found from array: %d\n", array_get(recordArray, keys, 10000000));
-  printf("time passed: \n");
+  end = clock();
+  time_spent = (double) (end - begin) / CLOCKS_PER_SEC;
+  printf("time passed: %f\n", time_spent);
 }
