@@ -13,6 +13,7 @@ typedef struct _hashmap{
   Entry * map;
   int entryNum,size;
   keyToHash integerCalculator;
+  cmpFunction comparer;
 
 } Hashmap;
 
@@ -26,13 +27,14 @@ int hashFunction(void* key,Hashmap map){
   return hash;
  }
 
-Hashmap * new_map(int size,keyToHash intCalculator){
+Hashmap *new_map(int size, keyToHash intCalculator, cmpFunction comparer) {
   Hashmap *map = malloc(sizeof(Hashmap));
 
-  map->entryNum=0;
+  map->entryNum = 0;
   map->size = size;
-  map->map=(Link)malloc(sizeof(Entry)*size*2);
-  map->integerCalculator=intCalculator;
+  map->map = (Link) malloc(sizeof(Entry) * size * 2);
+  map->integerCalculator = intCalculator;
+  map->comparer = comparer;
 
   return map;
 }
@@ -67,15 +69,79 @@ int count_entry(Hashmap * map){
   return map->entryNum;
 }
 
-void insert_entry(HashmapPtr map,void* key, void* value,cmpFunction compare){
+void insert_entry(HashmapPtr map, void *key, void *value) {
+  int index = hashFunction(key, *map);
+  Link p;
+
+  if (map->map[index].key == NULL) {
+    map->map[index].key = key;
+    map->map[index].value = value;
+  } else {
+    p = &map->map[index];
+    while (p->next != NULL) {
+      if (map->comparer(p->key, key) == 0) {
+        printf("found duplicate key, skipping\n");
+        return;
+      }
+      p = p->next;
+    }
+    if (map->comparer(p->key, key) == 0) {
+      printf("found duplicate key, skipping\n");
+      return;
+    }
+    p->next = malloc(sizeof(*p));
+    p->next->previous = p;
+    p = p->next;
+    p->value = value;
+    p->key = key;
+    map->entryNum++;
+  }
+}
+
+void *get_value(HashmapPtr map, void *key) {
+  int index = hashFunction(key, *map);
+  Link p;
+
+  p = &map->map[index];
+  while (p->next != NULL) {
+    if (map->comparer(p->key, key) == 0) {
+      break;
+    }
+    p = p->next;
+  }
+  if (map->comparer(p->key, key) == 0)
+    return p->value;
+  else {
+    printf("element not found\n");
+    return NULL;
+  }
 
 }
 
-void get_value(HashmapPtr map, void* key,cmpFunction compare){
+void delete_value(HashmapPtr map, void *key) {
+  int index = hashFunction(key, *map);
+  Link p, head;
 
-}
-void delete_value(HashmapPtr map, void* key,cmpFunction compare){
-
+  head = p = &map->map[index];
+  while (p->next != NULL) {
+    if (map->comparer(p->key, key) == 0) {
+      break;
+    }
+    p = p->next;
+  }
+  if (map->comparer(p->key, key) != 0) {
+    printf("element not found\n");
+    return;
+  }
+  //that's a bodge. fix it if you find a better way
+  if (p == head && p->next != NULL)
+    map->map[index] = *p->next;
+  else if (p == head) {
+    p->key = NULL;
+    p->value = NULL;
+  } else
+    p->previous->next = p->next;
+  free(p);
 }
 
 void ** get_keys(HashmapPtr map){
