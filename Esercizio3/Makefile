@@ -1,5 +1,5 @@
-CFLAGS_Test = -std=c11 -I include/ -I ../Resources/C/Unity/
-CFLAGS = -std=c11 -I include/
+CFLAGS_Test = -std=c11 -g -I include/ -I ../Resources/C/Unity/
+CFLAGS = -std=c11 -g -I include/
 
 all: bin/test bin/exampleApp
 

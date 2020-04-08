@@ -35,14 +35,6 @@ Pair *csv_reading_to_array(char *filename) {
   return recordArray;
 }
 
-int int_hasher(int *key) {
-  return *key;
-}
-
-int int_comparer(int a, int b) {
-  return a - b;
-}
-
 void mine_counting_sort(Pair arr[], int range) {
   Pair hostArray[6321078];
   int i;
@@ -52,24 +44,25 @@ void mine_counting_sort(Pair arr[], int range) {
   }
   for (i = 0; i < 6321078; ++i) {
     count[arr[i].key].key = arr[i].key;
-    count[arr[i].key].value=arr[i].value;
-    count[arr[i].key].occupied=1;
+    count[arr[i].key].value = arr[i].value;
+    count[arr[i].key].occupied = 1;
   }
-  for (int j=i=0; i <range +1 ; ++i) {
-    if (count[i].occupied){
-      arr[j].key=count[i].key;
-      arr[j].value=count[i].value;
+  for (int j = i = 0; i < range + 1; ++i) {
+    if (count[i].occupied) {
+      arr[j].key = count[i].key;
+      arr[j].value = count[i].value;
     }
   }
 }
+
+int int_hasher(int *key) {
+  return *key;
+}
+
+int int_comparer(int a, int b) {
+  return a - b;
+}
+
 int main() {
-  HashmapPtr hashmap = new_map(2, (keyToHash) int_hasher, (cmpFunction) int_comparer);
-  Pair *pairVect = malloc(sizeof(Pair) * 2);
-
-  pairVect[0].value = pairVect[0].key = 0;
-  pairVect[1].value = pairVect[1].key = 1;
-
-  insert_entry(hashmap, &pairVect[0].key, &pairVect[0].value);
-  insert_entry(hashmap, &pairVect[1].key, &pairVect[1].value);
 
 }
