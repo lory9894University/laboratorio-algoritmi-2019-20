@@ -124,10 +124,10 @@ void *get_value(HashmapPtr map, void *key) {
     }
     p = p->next;
   }
-  if (map->comparer(p->key, key) == 0)
+  if (p->key != NULL && map->comparer(p->key, key) == 0)
     return p->value;
   else {
-    printf("element not found\n");
+    //printf("element not found\n");
     return NULL;
   }
 
