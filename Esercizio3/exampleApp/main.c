@@ -69,8 +69,10 @@ void mine_counting_sort(Pair *arr, int range) {
     if (count[i].occupied) {
       arr[j].key = count[i].key;
       arr[j].value = count[i].value;
+      j++;
     }
   }
+  free(count);
 }
 
 int int_hasher(int *key) {
@@ -139,7 +141,7 @@ int hash_get(HashmapPtr map, int *keys, int lenght) {
 
 int binary_search(int key, int l, int r, Pair *recordArray) {
   int mid = l + (r - l) / 2;
-  if (r <= l)
+  if (r < l)
     return 0;
   if (recordArray[mid].key == key)
     return 1;
@@ -153,7 +155,7 @@ int array_get(Pair *recordArray, int *keys, int lenght) {
   int valuesFound = 0;
 
   for (int i = 0; i < lenght; ++i) {
-    if (binary_search(keys[i], 0, 6321078 - 1, recordArray))
+    if (binary_search(keys[i], 0, 6321078, recordArray))
       valuesFound++;
   }
   return valuesFound;
@@ -164,6 +166,7 @@ int main(int argc, char **argv) {
   Pair *recordArray;
   int *keys;
   int recordNumber, range;
+  int last = 0;
 
 
   if (argc != 3 && argc != 2)
@@ -172,7 +175,6 @@ int main(int argc, char **argv) {
     recordNumber = atoi(argv[2]);
   else
     recordNumber = file_lines(argv[1]);
-
   map = csv_reading_to_hashmap(argv[1], recordNumber);
   recordArray = csv_reading_to_array(argv[1], &range);
   mine_counting_sort(recordArray, range);
@@ -180,5 +182,5 @@ int main(int argc, char **argv) {
   printf("keys found from hashmap: %d\n", hash_get(map, keys, 10000000));
   printf("time passed: \n");
   printf("keys found from array: %d\n", array_get(recordArray, keys, 10000000));
-
+  printf("time passed: \n");
 }
