@@ -40,7 +40,7 @@ Pair *csv_reading_to_array(char *filename, int *range) {
 }
 
 int *random_picker() {
-  char *stringSeed = "http://www.youtube.com/watch?v=dQw4w9WgXcQ";
+  char *stringSeed = "http://www.youtube.com/watch?v=dQw4w9WgXcQ"; //not very professional, but truly random
   int numericSeed = 0;
   int i = 0;
   int *keys = malloc(sizeof(int) * 10000000);
