@@ -21,19 +21,14 @@ int is_empty_map(HashmapPtr map);
 int count_entry(HashmapPtr map);
 /**deletes every records in the map, not the map**/
 void cancel_map(HashmapPtr map);
-
 /** return 1 if a given key is present in the map**/
 int verify_key(HashmapPtr map, void *key);
-
 /** insert a new <K,V> entry**/
 void insert_entry(HashmapPtr map, void *key, void *value);
-
 /**returns the void pointer the value associated with the given key**/
 void *get_value(HashmapPtr map, void *key);
-
 /**delete the entry associated with the given key**/
 int delete_entry(HashmapPtr map, void *key);
-
 /**returns a list of the keys saved in the hashmap**/
 void **get_keys(HashmapPtr map);
 

@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/**this structure can be used as an element of the structure HashMap or as a node in a list (for the same structure)**/
 typedef struct _entry * Link;
 typedef struct _entry{
   void * key;
@@ -9,6 +10,8 @@ typedef struct _entry{
   Link next,previous;
 } Entry;
 
+/**hash map structure, saves every information needed during construction, so there's no need to 
+write them every time the function are used**/
 typedef struct _hashmap{
   Entry * map;
   int entryNum,size;
@@ -50,7 +53,6 @@ int is_empty_map(Hashmap * map){
 
 void cancel_map(Hashmap * map){
   Link p;
-  //TODO: devo deallocare i puntatori a void delle entry?
   for (int i = 0; i <map->size ; ++i) {
     p = &map->map[i];
     while (p->next != NULL)
@@ -76,6 +78,8 @@ int verify_key(HashmapPtr map, void *key) {
     }
     p = p->next;
   }
+  if (map->comparer(p->key, key) == 0) 
+      return 1;
   return 0;
 }
 
