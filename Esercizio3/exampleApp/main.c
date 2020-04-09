@@ -168,6 +168,8 @@ int main(int argc, char **argv) {
   int *keys;
   int recordNumber, range;
   int last = 0;
+  clock_t begin, end;
+  double time_spent;
 
 
   if (argc != 3 && argc != 2)
@@ -176,18 +178,29 @@ int main(int argc, char **argv) {
     recordNumber = atoi(argv[2]);
   else
     recordNumber = file_lines(argv[1]);
+
+  begin = clock();
   map = csv_reading_to_hashmap(argv[1], recordNumber);
+  end = clock();
+  time_spent = (double) (end - begin) / CLOCKS_PER_SEC;
+  printf("time passed for acquisition in hash map: %f\n", time_spent);
+
+  begin = clock();
   recordArray = csv_reading_to_array(argv[1], &range);
   mine_counting_sort(recordArray, range);
+  end = clock();
+  time_spent = (double) (end - begin) / CLOCKS_PER_SEC;
+  printf("time passed for acquisition in array: %f\n", time_spent);
+
   keys = random_picker();
-  clock_t begin = clock();
+  begin = clock();
   printf("keys found from hashmap: %d\n", hash_get(map, keys, 10000000));
-  clock_t end = clock();
-  double time_spent = (double) (end - begin) / CLOCKS_PER_SEC;
-  printf("time passed: %f\n", time_spent);
+  end = clock();
+  time_spent = (double) (end - begin) / CLOCKS_PER_SEC;
+  printf("time needed to get keys from hashmap: %f\n", time_spent);
   begin = clock();
   printf("keys found from array: %d\n", array_get(recordArray, keys, 10000000));
   end = clock();
   time_spent = (double) (end - begin) / CLOCKS_PER_SEC;
-  printf("time passed: %f\n", time_spent);
+  printf("time needed to get key from array: %f\n", time_spent);
 }
