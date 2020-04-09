@@ -20,7 +20,7 @@ typedef struct _hashmap{
 
 } Hashmap;
 
-/**function gets a key and hashes that value to get the position in the vetor**/
+/**function gets a key and hashes that value to get the position in the vector**/
 int hashFunction(void* key,Hashmap map){
    int hash=0;
 

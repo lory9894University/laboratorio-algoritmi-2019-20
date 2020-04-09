@@ -106,11 +106,19 @@ void only_keys(){
   TEST_ASSERT_EQUAL(1, verify_key(map,&keys[1]));
   TEST_ASSERT_EQUAL(1, verify_key(map,&keys[2]));
 
-  returnedKeys=(int*)get_keys(map);
 
-  TEST_ASSERT_EQUAL(0,returnedKeys[0]);
-  TEST_ASSERT_EQUAL(1,returnedKeys[1]);
-  TEST_ASSERT_EQUAL(2,returnedKeys[2]);
+}
+
+void duplicate_keys(){
+  HashmapPtr map = new_map(2, (keyToHash) hasher, (cmpFunction) comparer);
+  int keys[] = {0, 1, 2};
+  char values[] = {'a', 'b', 'c'};
+
+  insert_entry(map, (void *) &keys[0], (void *) &values[0]);
+  insert_entry(map, (void *) &keys[1], (void *) &values[1]);
+  insert_entry(map, (void *) &keys[1], (void *) &values[2]);
+
+  TEST_ASSERT_EQUAL(2, count_entry(map));
 
   free_map(map);
 }
@@ -121,8 +129,9 @@ int main() {
   RUN_TEST(empty_map);
   RUN_TEST(collision);
   RUN_TEST(deletion);
-  RUN_TEST(clean_restart);
   RUN_TEST(only_keys);
+  RUN_TEST(duplicate_keys);
+  RUN_TEST(clean_restart);
 
   UNITY_END();
 }
