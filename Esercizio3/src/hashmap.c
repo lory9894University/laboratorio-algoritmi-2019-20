@@ -91,6 +91,8 @@ void insert_entry(HashmapPtr map, void *key, void *value) {
   int index = hashFunction(key, *map);
   Link p;
 
+  /*The insertion should be made as the head of the list but
+   * sacrificing a bit of time on insertion i can check for duplicate keys*/
   if (map->map[index].key == NULL) {
     map->map[index].key = key;
     map->map[index].value = value;
@@ -154,6 +156,7 @@ int delete_entry(HashmapPtr map, void *key) {
   }
   map->entryNum--; //element found, decrese entry number even if it's not yet deleted
   //TODO: that's a bodge. fix it if you find a better way
+  //todo:la soluzione è un nodo sentinella
   if (p == head && p->next != NULL) {
     map->map[index] = *p->next;
     map->map[index].previous = NULL;
