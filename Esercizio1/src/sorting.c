@@ -5,29 +5,23 @@
 /*quicksort */
 /** partition function takes the element on the right and uses it as a pivot
  * then places the element lower then the pivot on its left and the greather on the right**/
-int partition(void **array, int l, int r, cmpFunction comparer) {
-  void *pivot = array[l];
+int partition(void **arr, int low, int high, cmpFunction comparer) {
   void *temp;
-  int j=r;
-  int i=l+1;
+  void *pivot = arr[high];
+  int i = (low - 1);
 
-   while(i<=j){
-    if (comparer(array[i],pivot) <= 0)
+  for (int j = low; j <= high - 1; j++) {
+    if (comparer(arr[j], pivot) < 0) {
       i++;
-    else if (array[j],pivot > 0)
-      j--;
-    else{
-      temp=array[i];
-      array[i]=array[j];
-      array[j]=temp;
-      i++;
-      j--;
+      temp = arr[i];
+      arr[i] = arr[j];
+      arr[j] = temp;
     }
   }
-  temp=array[l];
-  array[l]=array[j];
-  array[j]=temp;
-  return j;
+  temp = arr[i + 1];
+  arr[i + 1] = arr[high];
+  arr[high] = temp;
+  return (i + 1);
 }
 
 /**recursive part of the quick sort algorithm.
@@ -44,8 +38,9 @@ void quick_sort_rec(void **array, int l, int r, cmpFunction comparer) {
 }
 
 /**wrapper of quick sort function**/
-void quick_sort(void **array, size_t size, cmpFunction comparer) {
+void quick_sort(void **array, int size, cmpFunction comparer) {
   quick_sort_rec(array, 0, size - 1, comparer);
+
 }
 
 /*insertion sort*/

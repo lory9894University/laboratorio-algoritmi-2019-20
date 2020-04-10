@@ -78,11 +78,13 @@ void equal_array(){
 
 void ordered_array(){
   int ** array;
+  int orderedList[5]={1,2,3,5,7};
+
 
   array=malloc(sizeof(int *)*5);
   for (int i = 0; i < 5; ++i){
     array[i]=malloc(sizeof(int));
-    array[i]=&numberList[i];
+    array[i]=&orderedList[i];
   }
   
   insertion_sort((void*)array,5,(cmpFunction)int_comparer);

@@ -5,7 +5,7 @@
 
 typedef int (*cmpFunction)(void *, void *);
 
-void quick_sort(void **, size_t, cmpFunction);
+void quick_sort(void **, int, cmpFunction);
 
 void insertion_sort(void **, size_t, cmpFunction);
 

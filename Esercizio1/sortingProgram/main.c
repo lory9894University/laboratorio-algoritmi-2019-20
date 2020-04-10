@@ -34,7 +34,7 @@ void copy_from_line(char *line,Record *record){
   strcpy(record->field1,tempField1);
 }
 
-/**reads from the file having path "filname" according to the csv format
+/**reads from the file having path "filename" according to the csv format
  * saves the data in a RecordCollection struct (struct containig an array of records and its size)**/
 RecordColletion csv_reading(char * filename){
   FILE *fPtr;
@@ -97,7 +97,6 @@ int main(int argv, char **argc) {
     printf("do you want to use quick sort or insertion sort?[Q/I]\n");
     scanf("%c", &choice);
   }
-
   fptr = fopen("field1_out.csv", "w");
   if (choice == 'Q')
     quick_sort((void *) records.recordArray, records.size, (cmpFunction) string_comparer);
