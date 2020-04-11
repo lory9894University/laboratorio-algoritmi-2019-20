@@ -8,6 +8,7 @@ typedef struct _entry * Link;
 typedef struct _entry{
   void * key;
   void * value;
+  int sentinel;
   Link next,previous;
 } Entry;
 
@@ -37,6 +38,10 @@ Hashmap *new_map(int size, keyToHash intCalculator, cmpFunction comparer) {
   map->size = size;
   map->A=(sqrt(5)-1)/2;
   map->map = (Link) malloc(sizeof(Entry) * size);
+  for (int i = 0; i <map->size ; ++i) {
+    map->map[i].sentinel=1;
+    map->map[i].previous=map->map[i].next=&map->map[i];
+  }
   map->integerCalculator = intCalculator;
   map->comparer = comparer;
 
@@ -54,12 +59,10 @@ int is_empty_map(Hashmap * map){
 }
 
 void cancel_map(Hashmap * map){
-  Link p;
+  Link p,sentinel;
   for (int i = 0; i <map->size ; ++i) {
-    p = &map->map[i];
-    while (p->next != NULL)
-      p = p->next;
-    while (p->previous != NULL) {
+    sentinel = p = &map->map[i];
+    while (p->previous != sentinel) {
       p = p->previous;
       free(p->next);
     }
@@ -71,10 +74,10 @@ void cancel_map(Hashmap * map){
 
 int verify_key(HashmapPtr map, void *key) {
   int index = hashFunction(key, *map);
-  Link p;
+  Link p,sentinel;
 
-  p = &map->map[index];
-  while (p->next != NULL) {
+  sentinel= p = &map->map[index];
+  while (p->next !=sentinel ) {
     if (map->comparer(p->key, key) == 0) {
       return 1;
     }
@@ -91,17 +94,12 @@ int count_entry(Hashmap *map) {
 
 void insert_entry(HashmapPtr map, void *key, void *value) {
   int index = hashFunction(key, *map);
-  Link p;
+  Link p,sentinel;
 
   /*The insertion should be made as the head of the list but
    * sacrificing a bit of time on insertion i can check for duplicate keys*/
-  if (map->map[index].key == NULL) {
-    map->map[index].key = key;
-    map->map[index].value = value;
-    map->entryNum++;
-  } else {
-    p = &map->map[index];
-    while (p->next != NULL) {
+  p = sentinel = &map->map[index];
+    while (p->next != sentinel) {
       if (map->comparer(p->key, key) == 0) {
         printf("found duplicate key, skipping\n");
         return;
@@ -112,30 +110,28 @@ void insert_entry(HashmapPtr map, void *key, void *value) {
       printf("found duplicate key, skipping\n");
       return;
     }
-    p->next = malloc(sizeof(*p));
-    p->next->previous = p;
-    p = p->next;
-    p->value = value;
-    p->key = key;
-    map->entryNum++;
-  }
+  p->next = malloc(sizeof(*p));
+  p->next->previous = p;
+  p = p->next;
+  p->value = value;
+  p->key = key;
+  p->next=sentinel;
+  map->entryNum++;
+
 }
 
 void *get_value(HashmapPtr map, void *key) {
   int index = hashFunction(key, *map);
-  Link p;
+  Link p,sentinel;
 
-  p = &map->map[index];
-  while (p->next != NULL) {
-    if (map->comparer(p->key, key) == 0) {
-      break;
-    }
+  sentinel = p = &map->map[index];
+  while (p->next != sentinel && (map->comparer(p->key, key) == 0)) {
     p = p->next;
   }
-  if (p->key != NULL && map->comparer(p->key, key) == 0)
+  if (p->key != sentinel && map->comparer(p->key, key) == 0)
     return p->value;
   else {
-    //printf("element not found\n");
+    printf("element not found\n");
     return NULL;
   }
 
@@ -143,13 +139,10 @@ void *get_value(HashmapPtr map, void *key) {
 
 int delete_entry(HashmapPtr map, void *key) {
   int index = hashFunction(key, *map);
-  Link p, head;
+  Link p, sentinel;
 
-  head = p = &map->map[index];
-  while (p->next != NULL) {
-    if (map->comparer(p->key, key) == 0) {
-      break;
-    }
+  sentinel = p = &map->map[index];
+  while (p->next != sentinel && (map->comparer(p->key, key) == 0)) {
     p = p->next;
   }
   if (map->comparer(p->key, key) != 0) {
@@ -157,17 +150,8 @@ int delete_entry(HashmapPtr map, void *key) {
     return 0;
   }
   map->entryNum--; //element found, decrese entry number even if it's not yet deleted
-  //TODO: that's a bodge. fix it if you find a better way
-  //todo:la soluzione è un nodo sentinella
-  if (p == head && p->next != NULL) {
-    map->map[index] = *p->next;
-    map->map[index].previous = NULL;
-  } else if (p == head) {
-    p->key = NULL;
-    p->value = NULL;
-  } else {
-    p->previous->next = p->next;
-  }
+  p->previous->next=p->next;
+  p->next->previous=p->previous;
   free(p);
   return 1;
 }
@@ -175,19 +159,13 @@ int delete_entry(HashmapPtr map, void *key) {
 void ** get_keys(HashmapPtr map){
   void **keys;
   int c=0;
-  Link p;
+  Link p,sentinel;
 
   keys=malloc(sizeof(void*)*map->entryNum);
   for (int i = 0; i <map->size ; ++i) {
-    if (map->map[i].value!=NULL){
-      p=&map->map[i];
-      while(p->next!=NULL)
-        p=p->next;
-      while (p->previous!=NULL){
-        p=p->previous;
-        keys[c]=p->next;
-        c++;
-      }
+    p=sentinel=&map->map[i];
+    while (p->previous!=sentinel){
+      p=p->previous;
       keys[c]=p;
       c++;
     }
