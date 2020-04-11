@@ -77,6 +77,7 @@ void clean_restart() {
 
   TEST_ASSERT_EQUAL(3, count_entry(map));
   cancel_map(map);
+  //crasha qui
   TEST_ASSERT_EQUAL(0, count_entry(map));
 
   insert_entry(map, (void *) &keys[2], (void *) &values[2]);
@@ -117,6 +118,7 @@ void duplicate_keys(){
   insert_entry(map, (void *) &keys[0], (void *) &values[0]);
   insert_entry(map, (void *) &keys[1], (void *) &values[1]);
   insert_entry(map, (void *) &keys[1], (void *) &values[2]);
+
 
   TEST_ASSERT_EQUAL(2, count_entry(map));
 

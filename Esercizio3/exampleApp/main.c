@@ -163,6 +163,26 @@ int array_get(Pair *recordArray, int *keys, int lenght) {
 }
 
 int main(int argc, char **argv) {
+  /*
+  HashmapPtr map = new_map(3, (keyToHash) int_hasher, (cmpFunction) int_comparer);
+  int keys[] = {0, 1, 2};
+  char values[] = {'a', 'b', 'c'};
+
+  insert_entry(map, (void *) &keys[0], (void *) &values[0]);
+  insert_entry(map, (void *) &keys[1], (void *) &values[1]);
+  insert_entry(map, (void *) &keys[2], (void *) &values[2]);
+
+
+  cancel_map(map);
+  //crasha qui
+
+  insert_entry(map, (void *) &keys[2], (void *) &values[2]);
+  insert_entry(map, (void *) &keys[0], (void *) &values[0]);
+  insert_entry(map, (void *) &keys[1], (void *) &values[1]);
+
+
+  free_map(map);
+  */
   HashmapPtr map;
   Pair *recordArray;
   int *keys;
@@ -203,4 +223,5 @@ int main(int argc, char **argv) {
   end = clock();
   time_spent = (double) (end - begin) / CLOCKS_PER_SEC;
   printf("time needed to get key from array: %f\n", time_spent);
+  
 }

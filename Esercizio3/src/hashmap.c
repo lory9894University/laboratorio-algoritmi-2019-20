@@ -1,6 +1,7 @@
 #include "hashmap.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 /**this structure can be used as an element of the structure HashMap or as a node in a list (for the same structure)**/
 typedef struct _entry * Link;
@@ -15,16 +16,16 @@ write them every time the function are used**/
 typedef struct _hashmap{
   Entry * map;
   int entryNum,size;
+  double A;
   keyToHash integerCalculator;
   cmpFunction comparer;
-
 } Hashmap;
 
 /**function gets a key and hashes that value to get the position in the vector**/
 int hashFunction(void* key,Hashmap map){
    int hash=0;
-
-   hash= map.integerCalculator(key)%map.size;
+   int k= map.integerCalculator(key);
+   hash=(((k*map.A)-(int)(k*map.A))*map.size);
 
   return hash;
  }
@@ -34,6 +35,7 @@ Hashmap *new_map(int size, keyToHash intCalculator, cmpFunction comparer) {
 
   map->entryNum = 0;
   map->size = size;
+  map->A=(sqrt(5)-1)/2;
   map->map = (Link) malloc(sizeof(Entry) * size);
   map->integerCalculator = intCalculator;
   map->comparer = comparer;
