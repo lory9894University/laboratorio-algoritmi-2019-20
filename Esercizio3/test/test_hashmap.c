@@ -2,6 +2,7 @@
 #include "hashmap.h"
 #include <stdio.h>
 #include <stdlib.h>
+
 int hasher(int *key) {
   return *key;
 }
@@ -77,7 +78,6 @@ void clean_restart() {
 
   TEST_ASSERT_EQUAL(3, count_entry(map));
   cancel_map(map);
-  //crasha qui
   TEST_ASSERT_EQUAL(0, count_entry(map));
 
   insert_entry(map, (void *) &keys[2], (void *) &values[2]);
@@ -101,13 +101,12 @@ void only_keys(){
 
   insert_entry(map, (void *) &keys[0], (void *) &values[0]);
   insert_entry(map, (void *) &keys[1], (void *) &values[1]);
-  insert_entry(map, (void *) &keys[2], (void *) &values[2]);
 
   TEST_ASSERT_EQUAL(1, verify_key(map,&keys[0]));
   TEST_ASSERT_EQUAL(1, verify_key(map,&keys[1]));
-  TEST_ASSERT_EQUAL(1, verify_key(map,&keys[2]));
+  TEST_ASSERT_EQUAL(0, verify_key(map,&keys[2]));
 
-
+  free_map(map);
 }
 
 void duplicate_keys(){
