@@ -8,7 +8,6 @@ typedef struct _entry * Link;
 typedef struct _entry{
   void * key;
   void * value;
-  int sentinel;
   Link next,previous;
 } Entry;
 
@@ -38,10 +37,8 @@ Hashmap *new_map(int size, keyToHash intCalculator, cmpFunction comparer) {
   map->size = size;
   map->A=(sqrt(5)-1)/2;
   map->map = (Link) malloc(sizeof(Entry) * size);
-  for (int i = 0; i <map->size ; ++i) {
-    map->map[i].sentinel=1;
+  for (int i = 0; i <map->size ; ++i)
     map->map[i].previous=map->map[i].next=&map->map[i];
-  }
   map->integerCalculator = intCalculator;
   map->comparer = comparer;
 
@@ -78,12 +75,12 @@ int verify_key(HashmapPtr map, void *key) {
 
   sentinel= p = &map->map[index];
   while (p->next !=sentinel ) {
-    if (map->comparer(p->key, key) == 0) {
+    if (p!= sentinel && map->comparer(p->key, key) == 0) {
       return 1;
     }
     p = p->next;
   }
-  if (map->comparer(p->key, key) == 0) 
+  if (map->comparer(p->key, key) == 0)
       return 1;
   return 0;
 }
@@ -100,13 +97,13 @@ void insert_entry(HashmapPtr map, void *key, void *value) {
    * sacrificing a bit of time on insertion i can check for duplicate keys*/
   p = sentinel = &map->map[index];
     while (p->next != sentinel) {
-      if (map->comparer(p->key, key) == 0) {
+      if (p!= sentinel && map->comparer(p->key, key) == 0) {
         printf("found duplicate key, skipping\n");
         return;
       }
       p = p->next;
     }
-    if (map->comparer(p->key, key) == 0) {
+    if (p!= sentinel && map->comparer(p->key, key) == 0) {
       printf("found duplicate key, skipping\n");
       return;
     }
@@ -125,13 +122,13 @@ void *get_value(HashmapPtr map, void *key) {
   Link p,sentinel;
 
   sentinel = p = &map->map[index];
-  while (p->next != sentinel && (map->comparer(p->key, key) == 0)) {
+  p=p->next;
+  while (p->next != sentinel && (map->comparer(p->key, key) != 0)) {
     p = p->next;
   }
-  if (p->key != sentinel && map->comparer(p->key, key) == 0)
+  if (p!= sentinel && map->comparer(p->key, key) == 0)
     return p->value;
   else {
-    printf("element not found\n");
     return NULL;
   }
 
@@ -142,11 +139,11 @@ int delete_entry(HashmapPtr map, void *key) {
   Link p, sentinel;
 
   sentinel = p = &map->map[index];
-  while (p->next != sentinel && (map->comparer(p->key, key) == 0)) {
+  p = p->next;
+  while (p->next != sentinel && (map->comparer(p->key, key) != 0)) {
     p = p->next;
   }
-  if (map->comparer(p->key, key) != 0) {
-    printf("element not found\n");
+  if (p == sentinel || map->comparer(p->key, key) != 0) {
     return 0;
   }
   map->entryNum--; //element found, decrese entry number even if it's not yet deleted
