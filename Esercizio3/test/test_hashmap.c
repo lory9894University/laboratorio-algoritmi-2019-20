@@ -127,12 +127,12 @@ void duplicate_keys(){
 int main() {
   UNITY_BEGIN();
 
+  RUN_TEST(clean_restart);
+  RUN_TEST(only_keys);
   RUN_TEST(empty_map);
   RUN_TEST(collision);
   RUN_TEST(deletion);
-  RUN_TEST(only_keys);
   RUN_TEST(duplicate_keys);
-  RUN_TEST(clean_restart);
 
   UNITY_END();
 }

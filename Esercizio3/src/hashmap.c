@@ -61,10 +61,10 @@ void cancel_map(Hashmap * map){
     sentinel = p = &map->map[i];
     while (p->previous != sentinel) {
       p = p->previous;
-      free(p->next);
+      p->previous->next=p->next;
+      p->next->previous=p->previous;
+      free(p);
     }
-    p->value = NULL;
-    p->key = NULL;
   }
   map->entryNum = 0;
 }
@@ -113,6 +113,7 @@ void insert_entry(HashmapPtr map, void *key, void *value) {
   p->value = value;
   p->key = key;
   p->next=sentinel;
+  sentinel->previous=p;
   map->entryNum++;
 
 }
