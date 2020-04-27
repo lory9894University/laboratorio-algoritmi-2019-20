@@ -36,11 +36,11 @@ link copy_file(char *filename, Graph *graph, int *changeNum) {
 
   fscanf(fPtr, "%d\n", &linesAfter);
   graph->nodes = linesAfter;
-  graph->adjMatrix = malloc(sizeof(int *));
-  for (int i = 0; i < linesAfter; ++i) {
-    graph->adjMatrix[i] = malloc(sizeof(int));
+  graph->adjMatrix = malloc(sizeof(int*) * 100000);
+  for (int i = 0; i < 100000 ; ++i) {
+    graph->adjMatrix[i] = malloc(sizeof(int) * 100000);
   }
-  for (int i = 0; i < linesAfter; ++i) {
+  for (int i = 0; i < linesAfter-1; ++i) {
     fscanf(fPtr, "%d %d %d\n", &x, &y, &weight);
     graph->adjMatrix[x][y] = weight;
   }
@@ -67,7 +67,7 @@ void write_out(char *filename, char *yesArray) {
   int i = 0;
 
   if ((fPtr = fopen(filename, "w")) == NULL) {
-    printf("error creating the file, check permission\n", filename);
+    printf("error creating the file %s, check permission\n", filename);
     exit(1);
   }
 
