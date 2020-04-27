@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 typedef struct {
   int **adjMatrix;
@@ -39,6 +40,11 @@ link copy_file(char *filename, Graph *graph, int *changeNum) {
   graph->adjMatrix = malloc(sizeof(int*) * 100000);
   for (int i = 0; i < 100000 ; ++i) {
     graph->adjMatrix[i] = malloc(sizeof(int) * 100000);
+    graph->adjMatrix[i] = calloc(100000, sizeof(int));
+    /*vorrei lasciare qui un commento, in maniera poco professionale, a ricordo del fatto
+     * che ho perso 3 intere ore per capire come inizializzare a 0 in maniera efficiente questa matrice.
+     * in questa mia ricerca sono pure incappato in un bug che mandava completamente in crash il pc, vai a capire.
+     * salvo poi ricordarmi l'esistenza della funzione calloc*/
   }
   for (int i = 0; i < linesAfter-1; ++i) {
     fscanf(fPtr, "%d %d %d\n", &x, &y, &weight);
