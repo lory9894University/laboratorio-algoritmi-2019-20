@@ -40,4 +40,16 @@ public class TestEdit {
     assertEquals("the strings are completely different", EditDistance.editDistanceDyn("abcd", "efgh"), 8);
   }
 
+  @Test
+  public void SubstringTest() {
+
+    assertEquals("the strings are completely different", EditDistance.editDistanceRecursive("av", "java"), 2);
+    assertEquals("the strings are completely different", EditDistance.editDistanceDyn("av", "java"), 2);
+
+    assertEquals("the strings are completely different", EditDistance.editDistanceRecursive("like", "iReallyLikeJava"), 11);
+    assertEquals("the strings are completely different", EditDistance.editDistanceDyn("like", "iReallyLikeJava"), 11);
+
+
+
+  }
 }
