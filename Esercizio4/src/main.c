@@ -87,11 +87,13 @@ void write_out(char *filename, char *yesArray) {
   }
 }
 
-char is_graph_lower(Graph *graph, Change singleChange) {
-  if (graph->adjMatrix[singleChange.x][singleChange.y] > singleChange.weight)
+char is_graph_lower(Graph graph, Change singleChange) {
+  if (graph.adjMatrix[singleChange.x][singleChange.y] > singleChange.weight)
     return 'y';
-
+  graph.adjMatrix[singleChange.x][singleChange.y] = singleChange.weight;
   //todo:implementare dijkstra o bellman ford (anche solo una deep-first search), cerca di farlo dopo che lo farai a lezione
+
+      graph.adjMatrix[singleChange.x][singleChange.y]=0;
   return 'n';
 }
 
@@ -110,10 +112,10 @@ int main(int argv, char **argc) {
   changesHead = copy_file(argc[1], &graph, &changeNum);
   yesArray = malloc(sizeof(char) * changeNum);
   for (int i = 0; i < changeNum; ++i) {
-    yesArray[i] = is_graph_lower(&graph, *changesHead);
+    yesArray[i] = is_graph_lower(graph, *changesHead);
     changesHead = changesHead->next;
   }
-
+  write_out(argc[2],yesArray);
   free(yesArray);
 
 }
