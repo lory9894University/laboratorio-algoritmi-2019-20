@@ -92,7 +92,8 @@ char is_graph_lower(Graph graph, Change singleChange) {
     return 'y';
   graph.adjMatrix[singleChange.x][singleChange.y] = singleChange.weight;
   //todo:implementare dijkstra o bellman ford (anche solo una deep-first search), cerca di farlo dopo che lo farai a lezione
-
+  //si puo usare una BFS ( e cambiare il metodo di "storage" in una lista di adiacenze), oltretutto: il grafo proposto e un albero...
+  // secondo me devo riuscire a genereare una memoization per tutti i possibili sottoggrafi....in qualche modo il fatto che sia un albero puó tornare utile
       graph.adjMatrix[singleChange.x][singleChange.y]=0;
   return 'n';
 }
