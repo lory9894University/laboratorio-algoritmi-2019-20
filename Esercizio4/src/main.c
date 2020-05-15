@@ -2,13 +2,19 @@
 #include <stdlib.h>
 #include <string.h>
 
+typedef struct _Edge *nextEdge;
+typedef struct _Change *link;
+
 typedef struct {
-  int **adjMatrix;
+  nextEdge * vertexes; //dirty bodge, but I prefere wasting 16 bit than an hour debugging
   int nodes;
-  //todo: matrice di adiacenze o lista? matrice perchè necessita di meno tempo a discapito della memoria
 } Graph;
 
-typedef struct _Change *link;
+typedef struct _Edge{
+  int weight, to;
+  nextEdge next;
+} edge;
+
 /**a single change, can be used as a list of changes**/
 typedef struct _Change {
   int x, y;
@@ -16,7 +22,13 @@ typedef struct _Change {
   link next;
 } Change;
 
-/**creation of a new node**/
+/**creation of a new edge**/
+nextEdge new_edge(nextEdge next){
+  nextEdge x = malloc(sizeof(struct _Edge));
+  x->next=next;
+  return x;
+}
+/**creation of a new node in the changes list**/
 link new_node(link next) {
   link x = malloc(sizeof(struct _Change));
   x->next = next;
@@ -37,19 +49,18 @@ link copy_file(char *filename, Graph *graph, int *changeNum) {
 
   fscanf(fPtr, "%d\n", &linesAfter);
   graph->nodes = linesAfter;
-  graph->adjMatrix = malloc(sizeof(int*) * 100000);
-  for (int i = 0; i < 100000 ; ++i) {
-    graph->adjMatrix[i] = malloc(sizeof(int) * 100000);
-    graph->adjMatrix[i] = calloc(100000, sizeof(int));
-    /*vorrei lasciare qui un commento, in maniera poco professionale, a ricordo del fatto
-     * che ho perso 3 intere ore per capire come inizializzare a 0 in maniera efficiente questa matrice.
-     * in questa mia ricerca sono pure incappato in un bug che mandava completamente in crash il pc, vai a capire.
-     * salvo poi ricordarmi l'esistenza della funzione calloc*/
-  }
-  for (int i = 0; i < linesAfter-1; ++i) {
+  graph->vertexes = malloc(sizeof(nextEdge)*100001);
+  for (int i = 1; i < linesAfter; ++i) {
     fscanf(fPtr, "%d %d %d\n", &x, &y, &weight);
-    graph->adjMatrix[x][y] = weight;
+    graph->vertexes[x]=new_edge(graph->vertexes[x]);
+    graph->vertexes[x]->weight=weight;
+    graph->vertexes[x]->to=y;
+    graph->vertexes[y]=new_edge(graph->vertexes[y]);
+    graph->vertexes[y]->weight=weight;
+    graph->vertexes[y]->to=x;
+
   }
+
 
   fscanf(fPtr, "%d\n", &linesAfter);
   *changeNum = linesAfter;
@@ -88,13 +99,6 @@ void write_out(char *filename, char *yesArray) {
 }
 
 char is_graph_lower(Graph graph, Change singleChange) {
-  if (graph.adjMatrix[singleChange.x][singleChange.y] > singleChange.weight)
-    return 'y';
-  graph.adjMatrix[singleChange.x][singleChange.y] = singleChange.weight;
-  //todo:implementare dijkstra o bellman ford (anche solo una deep-first search), cerca di farlo dopo che lo farai a lezione
-  //si puo usare una BFS ( e cambiare il metodo di "storage" in una lista di adiacenze), oltretutto: il grafo proposto e un albero...
-  // secondo me devo riuscire a genereare una memoization per tutti i possibili sottoggrafi....in qualche modo il fatto che sia un albero puó tornare utile
-      graph.adjMatrix[singleChange.x][singleChange.y]=0;
   return 'n';
 }
 
