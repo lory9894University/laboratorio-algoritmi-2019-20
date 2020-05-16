@@ -4,9 +4,10 @@
 
 typedef struct _Edge *nextEdge;
 typedef struct _Change *link;
+typedef struct _MemoEdge * nextMemo;
 
 typedef struct {
-  nextEdge * vertexes; //dirty bodge, but I prefere wasting 16 bit than an hour debugging
+  nextEdge * vertexes;
   int nodes;
 } Graph;
 
@@ -21,6 +22,15 @@ typedef struct _Change {
   int weight;
   link next;
 } Change;
+
+typedef struct _MemoEdge{
+  int from;
+  int * trough;
+  nextEdge next;
+} memoEdge;
+
+/**gcc trick, initialize the array setting every element to null**/
+nextMemo memoList[100001] ={[0 ... 100000] = NULL};
 
 /**creation of a new edge**/
 nextEdge new_edge(nextEdge next){
@@ -49,7 +59,7 @@ link copy_file(char *filename, Graph *graph, int *changeNum) {
 
   fscanf(fPtr, "%d\n", &linesAfter);
   graph->nodes = linesAfter;
-  graph->vertexes = malloc(sizeof(nextEdge)*100001);
+  graph->vertexes = malloc(sizeof(nextEdge)*100001); //dirty bodge, but I prefere wasting 32 bit than an hour debugging
   for (int i = 1; i < linesAfter; ++i) {
     fscanf(fPtr, "%d %d %d\n", &x, &y, &weight);
     graph->vertexes[x]=new_edge(graph->vertexes[x]);
@@ -76,6 +86,8 @@ link copy_file(char *filename, Graph *graph, int *changeNum) {
     node->y = y;
     node->weight = weight;
   }
+
+  fclose(fPtr);
   return head;
 }
 
@@ -96,9 +108,14 @@ void write_out(char *filename, char *yesArray) {
 
     i++;
   }
+  fclose(fPtr);
 }
 
 char is_graph_lower(Graph graph, Change singleChange) {
+  /* Uso dijkstra (probabilmente è emglio Primm), ma quando questo arriva ad un vertice scorre la sua lista. se il percorso fra il nodo
+   * che sto guardando ed il nodo a cui voglio giungere è già stato percorso (è in lista) MEMOIZATION!
+   * a quel punto attacco il lavoro fatto dall'algoritmo alla memoization creando una nuova entry che salverò nella memoList */
+
   return 'n';
 }
 
