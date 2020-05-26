@@ -121,21 +121,45 @@ void write_out(char *filename, char *yesArray) {
   }
 }
 
-void pathFind(Graph graph,int from, int to, memNode * path){
+int pathFind(Graph graph,int from, int to,int noLoop, memNode * path){
   memNode * new;
   nextEdge head;
+  int found=0;
+  int x,y;
+  if (from==to){
+    return 1;
+  }
   if (graph.adjMatrix[from][to]==NULL){
     head=graph.adjList[from];
     while (head!=NULL){
-      pathFind(graph,head->to,to,path);
+      if (head->to==noLoop){
+        head=head->next;
+        continue;
+      }
+      found = pathFind(graph,head->to,to,from,path);
+      if (found)
+        break;
       head=head->next;
+    }
+    if (!found){
+      return 0;
     }
     //save in MemoizationMatrix
     new = malloc(sizeof(memNode));
     graph.adjMatrix[from][to]=path;
     //save in the list
     new ->memoLink=path->memoLink;
+    new ->nextId=head->to;
+    if (from>head->to){
+      x=from;
+      y=head->to;
+    } else{
+      y=from;
+      x=head->to;
+    }
+    new ->weight=graph.adjMatrix[x][y]->weight;
     path->memoLink=new;
+    return 1;
   } else{
     //prelevalo dalla matrice dinamica e salvalo nella lista
     new=graph.adjMatrix[from][to];
@@ -143,14 +167,13 @@ void pathFind(Graph graph,int from, int to, memNode * path){
       new=new->memoLink;
     new ->memoLink=path->memoLink;
     path->memoLink=graph.adjMatrix[from][to];
+    return 1;
   }
-
- return;
 }
 char pathAnalize(memNode * path,int weight){
-  memNode * next = path;
+  memNode * next = path->memoLink;
   while (next != NULL){
-    if (next->weight< weight)
+    if (next->weight> weight)
       return 'y';
     next = next->memoLink;
   }
@@ -160,7 +183,6 @@ char pathAnalize(memNode * path,int weight){
 char is_graph_lower(Graph graph, Change singleChange) {
   int from, to;
   memNode * path = malloc(sizeof(memNode));
-  memNode * rm = path;
 
   if (singleChange.x>singleChange.y){
     from=singleChange.x;
@@ -173,7 +195,7 @@ char is_graph_lower(Graph graph, Change singleChange) {
   if (graph.adjMatrix[from][to] != NULL && graph.adjMatrix[from][to]->weight > singleChange.weight)
     return 'y';
 
-  pathFind(graph,from,to,path);
+  pathFind(graph,from,to,-1,path);
   return pathAnalize(path,singleChange.weight);
 }
 
