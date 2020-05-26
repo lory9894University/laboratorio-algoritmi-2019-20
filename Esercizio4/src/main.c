@@ -123,11 +123,26 @@ void write_out(char *filename, char *yesArray) {
 
 void pathFind(Graph graph,int from, int to, memNode * path){
   memNode * new;
+  nextEdge head;
   if (graph.adjMatrix[from][to]==NULL){
-
-
+    head=graph.adjList[from];
+    while (head!=NULL){
+      pathFind(graph,head->to,to,path);
+      head=head->next;
+    }
+    //save in MemoizationMatrix
+    new = malloc(sizeof(memNode));
+    graph.adjMatrix[from][to]=path;
+    //save in the list
+    new ->memoLink=path->memoLink;
+    path->memoLink=new;
   } else{
-
+    //prelevalo dalla matrice dinamica e salvalo nella lista
+    new=graph.adjMatrix[from][to];
+    while (new->memoLink!=NULL)
+      new=new->memoLink;
+    new ->memoLink=path->memoLink;
+    path->memoLink=graph.adjMatrix[from][to];
   }
 
  return;
@@ -146,8 +161,6 @@ char is_graph_lower(Graph graph, Change singleChange) {
   int from, to;
   memNode * path = malloc(sizeof(memNode));
   memNode * rm = path;
-  if (graph.adjMatrix[singleChange.x][singleChange.y]->weight > singleChange.weight)
-    return 'y';
 
   if (singleChange.x>singleChange.y){
     from=singleChange.x;
@@ -157,13 +170,10 @@ char is_graph_lower(Graph graph, Change singleChange) {
     to=singleChange.x;
   }
 
+  if (graph.adjMatrix[from][to] != NULL && graph.adjMatrix[from][to]->weight > singleChange.weight)
+    return 'y';
+
   pathFind(graph,from,to,path);
-  while (path != NULL){
-    path = path->memoLink;
-    free(rm);
-    rm = path;
-  }
-  free(rm);
   return pathAnalize(path,singleChange.weight);
 }
 
