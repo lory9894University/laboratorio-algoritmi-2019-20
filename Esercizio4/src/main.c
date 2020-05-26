@@ -2,19 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct _Edge *nextEdge;
 typedef struct _Change *link;
-typedef struct _MemoEdge * nextMemo;
-
-typedef struct {
-  nextEdge * vertexes;
-  int nodes;
-} Graph;
-
-typedef struct _Edge{
-  int weight, to;
-  nextEdge next;
-} edge;
+typedef struct _MemNode * nextNode;
+typedef struct _Edge *nextEdge;
 
 /**a single change, can be used as a list of changes**/
 typedef struct _Change {
@@ -23,14 +13,29 @@ typedef struct _Change {
   link next;
 } Change;
 
-typedef struct _MemoEdge{
-  int from;
-  int * trough;
+typedef struct _Edge{
+  int weight, to;
   nextEdge next;
-} memoEdge;
+} edge;
 
-/**gcc trick, initialize the array setting every element to null**/
-nextMemo memoList[100001] ={[0 ... 100000] = NULL};
+typedef struct _MemNode{
+  int weight;
+  int nextId;
+  nextNode memoLink;
+}memNode;
+
+typedef struct {
+  nextNode **adjMatrix;
+  nextEdge * adjList;
+  int nodes;
+} Graph;
+
+/**creation of a new node**/
+link new_node(link next) {
+  link x = malloc(sizeof(struct _Change));
+  x->next = next;
+  return x;
+}
 
 /**creation of a new edge**/
 nextEdge new_edge(nextEdge next){
@@ -38,18 +43,13 @@ nextEdge new_edge(nextEdge next){
   x->next=next;
   return x;
 }
-/**creation of a new node in the changes list**/
-link new_node(link next) {
-  link x = malloc(sizeof(struct _Change));
-  x->next = next;
-  return x;
-}
 
-/**reading of the file having "filename" path**/
+/**reading the file having "filename" path**/
 link copy_file(char *filename, Graph *graph, int *changeNum) {
   FILE *fPtr;
   link head, node;
   int linesAfter;
+  int from, to;
   int x, y, weight;
 
   if ((fPtr = fopen(filename, "r")) == NULL) {
@@ -59,18 +59,31 @@ link copy_file(char *filename, Graph *graph, int *changeNum) {
 
   fscanf(fPtr, "%d\n", &linesAfter);
   graph->nodes = linesAfter;
-  graph->vertexes = malloc(sizeof(nextEdge)*100001); //dirty bodge, but I prefere wasting 32 bit than an hour debugging
-  for (int i = 1; i < linesAfter; ++i) {
-    fscanf(fPtr, "%d %d %d\n", &x, &y, &weight);
-    graph->vertexes[x]=new_edge(graph->vertexes[x]);
-    graph->vertexes[x]->weight=weight;
-    graph->vertexes[x]->to=y;
-    graph->vertexes[y]=new_edge(graph->vertexes[y]);
-    graph->vertexes[y]->weight=weight;
-    graph->vertexes[y]->to=x;
-
+  graph->adjMatrix = malloc(sizeof(nextNode*) * 100001);
+  graph->adjList = malloc(sizeof(nextEdge)*100001); //dirty bodge, but I prefere wasting 32 bit than an hour debugging
+  for (int i = 0; i < 100001 ; ++i) {
+    graph->adjMatrix[i] = malloc(sizeof(nextNode) * 100001-i); //i only need the lower half of the matrix
   }
+  for (int i = 0; i < linesAfter-1; ++i) {
+    fscanf(fPtr, "%d %d %d\n", &x, &y, &weight);
+    graph->adjList[x]=new_edge(graph->adjList[x]);
+    graph->adjList[x]->weight=weight;
+    graph->adjList[x]->to=y;
+    graph->adjList[y]=new_edge(graph->adjList[y]);
+    graph->adjList[y]->weight=weight;
+    graph->adjList[y]->to=x;
 
+    if (x>y){
+      from=x;
+      to=y;
+    } else{
+      from=y;
+      to=x;
+    }
+    graph->adjMatrix[from][to]= malloc(sizeof(nextNode));
+    graph->adjMatrix[from][to] ->weight= weight;
+    graph->adjMatrix[from][to] ->nextId= to;
+  }
 
   fscanf(fPtr, "%d\n", &linesAfter);
   *changeNum = linesAfter;
@@ -86,8 +99,6 @@ link copy_file(char *filename, Graph *graph, int *changeNum) {
     node->y = y;
     node->weight = weight;
   }
-
-  fclose(fPtr);
   return head;
 }
 
@@ -108,15 +119,52 @@ void write_out(char *filename, char *yesArray) {
 
     i++;
   }
-  fclose(fPtr);
+}
+
+void pathFind(Graph graph,int from, int to, memNode * path){
+  memNode * new;
+  if (graph.adjMatrix[from][to]==NULL){
+
+
+  } else{
+
+  }
+
+ return;
+}
+char pathAnalize(memNode * path,int weight){
+  memNode * next = path;
+  while (next != NULL){
+    if (next->weight< weight)
+      return 'y';
+    next = next->memoLink;
+  }
+  return 'n';
 }
 
 char is_graph_lower(Graph graph, Change singleChange) {
-  /* Uso dijkstra (probabilmente è emglio Primm), ma quando questo arriva ad un vertice scorre la sua lista. se il percorso fra il nodo
-   * che sto guardando ed il nodo a cui voglio giungere è già stato percorso (è in lista) MEMOIZATION!
-   * a quel punto attacco il lavoro fatto dall'algoritmo alla memoization creando una nuova entry che salverò nella memoList */
+  int from, to;
+  memNode * path = malloc(sizeof(memNode));
+  memNode * rm = path;
+  if (graph.adjMatrix[singleChange.x][singleChange.y]->weight > singleChange.weight)
+    return 'y';
 
-  return 'n';
+  if (singleChange.x>singleChange.y){
+    from=singleChange.x;
+    to=singleChange.y;
+  } else{
+    from=singleChange.y;
+    to=singleChange.x;
+  }
+
+  pathFind(graph,from,to,path);
+  while (path != NULL){
+    path = path->memoLink;
+    free(rm);
+    rm = path;
+  }
+  free(rm);
+  return pathAnalize(path,singleChange.weight);
 }
 
 int main(int argv, char **argc) {
