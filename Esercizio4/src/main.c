@@ -122,53 +122,32 @@ void write_out(char *filename, char *yesArray) {
 }
 
 int pathFind(Graph graph,int from, int to,int noLoop, memNode * path){
-  memNode * new;
-  nextEdge head;
+  nextEdge head= graph.adjList[from];
+  nextNode new;
   int found=0;
-  int x,y;
+  //base case
   if (from==to){
     return 1;
   }
-  if (graph.adjMatrix[from][to]==NULL){
-    head=graph.adjList[from];
-    while (head!=NULL){
-      if (head->to==noLoop){
-        head=head->next;
-        continue;
-      }
-      found = pathFind(graph,head->to,to,from,path);
-      if (found)
-        break;
+
+  while (head!=NULL){
+    if (head->to == noLoop){
       head=head->next;
+      continue;
     }
-    if (!found){
-      return 0;
+    found=pathFind(graph,head->to,to,from,path);
+    if (found){
+      new=malloc(sizeof(memNode));
+      new->memoLink=path->memoLink;
+      new->nextId=head->to;
+      new->weight = head->weight;
+      path->memoLink=new;
+      return 1;
     }
-    //save in MemoizationMatrix
-    new = malloc(sizeof(memNode));
-    graph.adjMatrix[from][to]=path;
-    //save in the list
-    new ->memoLink=path->memoLink;
-    new ->nextId=head->to;
-    if (from>head->to){
-      x=from;
-      y=head->to;
-    } else{
-      y=from;
-      x=head->to;
-    }
-    new ->weight=graph.adjMatrix[x][y]->weight;
-    path->memoLink=new;
-    return 1;
-  } else{
-    //prelevalo dalla matrice dinamica e salvalo nella lista
-    new=graph.adjMatrix[from][to];
-    while (new->memoLink!=NULL)
-      new=new->memoLink;
-    new ->memoLink=path->memoLink;
-    path->memoLink=graph.adjMatrix[from][to];
-    return 1;
+    head=head->next;
   }
+
+  return 0;
 }
 char pathAnalize(memNode * path,int weight){
   memNode * next = path->memoLink;
