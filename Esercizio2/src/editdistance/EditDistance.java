@@ -48,11 +48,16 @@ public class EditDistance {
   }
 
   /**
-   * populate the matrix of edit distance of s1 and s2
+   * populate the matrix of edit distance of s1 and s2, using the same matrix to shorten execution.
+   * if the difference between two substring has already been calculated is stored in the matrix "matrix".
+   * It can be retrieved and use to calculate more complex solution that contains that substring
    *
+   * @param matrix matrix used to save partial solution
    * @param s1 source string
    * @param s2 objective string
-   * @return the edit distance between s1 and s2
+   * @param i iterator for string source, used to divide the string is smaller substring
+   * @param j iterator for string objective, used to divide the string is smaller substring
+   * @return the edit distance between s1[0...i] and s2[0...j]
    **/
   private static int calculateDistance(String s1, String s2, int[][] matrix, int i, int j) {
     if (i<0)
