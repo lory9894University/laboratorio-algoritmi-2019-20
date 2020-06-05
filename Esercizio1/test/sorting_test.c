@@ -17,7 +17,7 @@ void empty_array(){
   TEST_PASS();
 }
 
-void casual_array(){
+void generic_array(){
   int ** array;
 
   array=malloc(sizeof(int *)*5);
@@ -146,7 +146,7 @@ int main(){
   UNITY_BEGIN();
 
   RUN_TEST(empty_array);
-  RUN_TEST(casual_array);
+  RUN_TEST(generic_array);
   RUN_TEST(equal_array);
   RUN_TEST(ordered_array);
   RUN_TEST(inverted_array);

@@ -5,12 +5,14 @@
 
 typedef struct _Record *RecordLink;
 
+/**a single record**/
 typedef struct _Record {
   int id, field2;
   float field3;
   char *field1;
 } Record;
 
+/**an array of record (including array size for comodity)**/
 typedef struct {
   RecordLink *recordArray;
   size_t size;
@@ -66,6 +68,8 @@ RecordColletion csv_reading(char * filename){
   return records;
 }
 
+/** the compare functions for every type of field in the records,
+* those functions will be passed to the sorting function **/
 static int int_comparer(Record *record1, Record *record2) {
   return record1->field2 - record2->field2;
 }
@@ -127,5 +131,9 @@ int main(int argv, char **argc) {
             records.recordArray[i]->field2, records.recordArray[i]->field3);
   }
   fclose(fptr);
+  for (int i = 0; i < records.size; ++i)
+  {
+    free(records.recordArray[i]);
+  }
   return 0;
 }
