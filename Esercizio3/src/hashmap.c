@@ -29,7 +29,7 @@ int hashFunction(void* key,Hashmap map){
 
   return hash;
  }
-
+/*map constructor*/
 Hashmap *new_map(int size, keyToHash intCalculator, cmpFunction comparer) {
   Hashmap *map = malloc(sizeof(Hashmap));
 
@@ -45,6 +45,7 @@ Hashmap *new_map(int size, keyToHash intCalculator, cmpFunction comparer) {
   return map;
 }
 
+/**map distructor**/
 void free_map(Hashmap * map){
   cancel_map(map);
   free(map->map);

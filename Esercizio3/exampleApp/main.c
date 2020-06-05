@@ -39,6 +39,7 @@ Pair *csv_reading_to_array(char *filename, int *range) {
   return recordArray;
 }
 
+/**picks 10000000 random keys from an hardcoded seed (to make multiple run coherent)**/
 int *random_picker() {
   int numericSeed = 3959;
   int i = 0;
@@ -51,6 +52,7 @@ int *random_picker() {
   return keys;
 }
 
+/*adaptation of counting sort to order the array of records*/
 void mine_counting_sort(Pair *arr, int range) {
   int i;
   Pair *count = malloc(sizeof(Pair) * range + 1);
@@ -72,6 +74,8 @@ void mine_counting_sort(Pair *arr, int range) {
   free(count);
 }
 
+/**this functions needs to be passed to the hash-map library because without knowing the data type
+* i cant immagine a way to compare the keys or hash them (more explanation in hashmap.h)**/
 int int_hasher(int *key) {
   return *key;
 }
@@ -80,8 +84,8 @@ int int_comparer(int *a, int *b) {
   return *a - *b;
 }
 
-/**this function needs the number of record in the inout file
- * it's a peculiar request but reduces drastically the execution time**/
+/**this function needs the number of record in the inpout file
+ * it's a peculiar request but reduces the execution time**/
 HashmapPtr csv_reading_to_hashmap(char *filename, int recordnum) {
   FILE *fPtr;
   char textLine[1024];
@@ -109,6 +113,7 @@ HashmapPtr csv_reading_to_hashmap(char *filename, int recordnum) {
   return hashmap;
 }
 
+/*simply counts the lines in the file*/
 int file_lines(char *filename) {
   FILE *fPtr;
   int i = 0;
@@ -126,6 +131,8 @@ int file_lines(char *filename) {
   return i;
 }
 
+/*get the value stored in the hashmap corresponding to the keys in the array "keys"
+* return the number of keys found*/
 int hash_get(HashmapPtr map, int *keys, int lenght) {
   int valuesFound = 0;
   for (int i = 0; i < lenght; ++i) {
@@ -135,6 +142,7 @@ int hash_get(HashmapPtr map, int *keys, int lenght) {
   }
   return valuesFound;
 }
+
 
 int binary_search(int key, int l, int r, Pair *recordArray) {
   int mid = l + (r - l) / 2;
@@ -148,6 +156,7 @@ int binary_search(int key, int l, int r, Pair *recordArray) {
     return binary_search(key, l, mid - 1, recordArray);
 }
 
+/**gets the value saved in the array corresponfign to the elements saved in the keys array**/
 int array_get(Pair *recordArray, int *keys, int lenght) {
   int valuesFound = 0;
 
@@ -169,7 +178,8 @@ int main(int argc, char **argv) {
 
 
   if (argc != 3 && argc != 2)
-    printf("helper todo..\n");
+    printf("insert the file path as the first argument,
+    	the number of lines as the second (optional)\n");
   if (argc == 3)
     recordNumber = atoi(argv[2]);
   else
