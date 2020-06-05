@@ -13,17 +13,22 @@ typedef struct _Change {
   link next;
 } Change;
 
+/**the base component used to create the adjacences list**/
 typedef struct _Edge{
   int weight, to;
   nextEdge next;
 } edge;
 
+/**this struct has a double use: it can be used as the base element to create the
+ *adjacences matrix or (more important) can be used to store "path" from 2 nodes.
+ *It's not used in my program because i can't make memoization working*/
 typedef struct _MemNode{
   int weight;
   int nextId;
   nextNode memoLink;
 }memNode;
 
+/**generic wrapper for the graph**/
 typedef struct {
   nextNode **adjMatrix;
   nextEdge * adjList;
@@ -44,7 +49,7 @@ nextEdge new_edge(nextEdge next){
   return x;
 }
 
-/**reading the file having "filename" path**/
+/**reading the file having "filename" path and saving graph information in the adjList and in the memoization matrix**/
 link copy_file(char *filename, Graph *graph, int *changeNum) {
   FILE *fPtr;
   link head, node;
@@ -121,6 +126,10 @@ void write_out(char *filename, char *yesArray) {
   }
 }
 
+/**
+ * finds a path between 2 nodes, can be used recursively or with the help of the memoization matrix (stored in the struct _Graph)
+ * right now i tried to use the dynamic programming paradigm but my solution doesen't seem correct, so im' using simple recursion
+ */
 int pathFind(Graph graph,int from, int to,int noLoop, memNode * path){
   nextEdge head= graph.adjList[from];
   nextNode new;
@@ -130,35 +139,39 @@ int pathFind(Graph graph,int from, int to,int noLoop, memNode * path){
     return 1;
   }
 
-  while (head!=NULL){
+  while (head != NULL){
     if (head->to == noLoop){
       head=head->next;
       continue;
     }
-    found=pathFind(graph,head->to,to,from,path);
+    found=pathFind(graph, head->to, to, from, path);
     if (found){
       new=malloc(sizeof(memNode));
       new->memoLink=path->memoLink;
-      new->nextId=head->to;
+      new->nextId = head->to;
       new->weight = head->weight;
-      path->memoLink=new;
+      path->memoLink = new;
       return 1;
     }
-    head=head->next;
+    head = head->next;
   }
 
   return 0;
 }
-char pathAnalize(memNode * path,int weight){
-  memNode * next = path->memoLink;
-  while (next != NULL){
-    if (next->weight> weight)
+
+/** analize the path between 2 nodes, returns yes if the new edge makes this path lighter, no otherwise*/
+char pathAnalize(memNode *path, int weight) {
+  memNode *next = path->memoLink;
+  while (next != NULL) {
+    if (next->weight > weight)
       return 'y';
     next = next->memoLink;
   }
   return 'n';
 }
 
+/**given a new edge this function finds the path between the two vertexs of the edge.
+ * then analyze this path and return yes if the new edge makes the graph lighter*/
 char is_graph_lower(Graph graph, Change singleChange) {
   int from, to;
   memNode * path = malloc(sizeof(memNode));
